@@ -1,0 +1,21 @@
+---
+- name: Play de ping
+  hosts: produccion
+  
+  tasks:
+    - name: hacer un ping
+      ansible.builtin.ping:
+   
+    - name: hacer un curl
+      ansible.builtin.uri:
+        url: "http://{{inventory_hostname}}:80/"
+        method: GET
+        return_content: true
+
+#- name: hacer otra cosa
+#  hosts: produccion
+  
+# tasks:
+#   - name: hacer algo
+#      modulo_de_ansible:
+#       parametros…

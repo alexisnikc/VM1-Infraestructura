@@ -1,0 +1,12 @@
+.bash_history
+.bash_logout
+.bash_profile
+.bashrc
+.cache/
+.config/
+.docker/
+.lesshst
+.local/
+.ssh/
+.viminfo
+.wget-hsts

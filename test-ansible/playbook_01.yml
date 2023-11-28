@@ -8,8 +8,8 @@
    
     - name: hacer un curl
       ansible.builtin.uri:
-        url: "http://{{inventory_hostname}}:80/"
         method: GET
+        url: "http://{{inventory_hostname}}:80/"
         return_content: true
 
 #- name: hacer otra cosa

@@ -8,9 +8,9 @@ services:
     ports:
       - 8080:8080
       - 50000:50000
-    restart: always
     networks:
       - net_jenkins
+    restart: always
 
   init:
     image: bash
@@ -19,7 +19,6 @@ services:
     volumes:
       - ./init.sh:/mnt/init.sh
     command: ["sh", "-e", "/mnt/init.sh"]
-    
 
   sonarqube:
     container_name: sonarqube
@@ -28,8 +27,8 @@ services:
       - db
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
-      SONAR_JDBC_USERNAME: sonartest
-      SONAR_JDBC_PASSWORD: sonartest
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
@@ -37,23 +36,25 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - net_sonar
+      - net_jenkins
+  
   db:
     image: postgres:12
-    networks:
-      - net_sonar  
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
     volumes:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - net_jenkins
 
   ansible:
     container_name: ansible
     image: williamyeh/ansible:alpine3
     volumes:
-      - ./ansible:/ansible
+      - ./ansible:/etc/ansible
+    command: ["ansible-playbook", "/etc/ansible/playbook_01.yml"]
     restart: always
 
 volumes:
@@ -67,4 +68,3 @@ volumes:
 
 networks:
   net_jenkins:
-  net_sonar:

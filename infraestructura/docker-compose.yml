@@ -8,34 +8,7 @@ services:
     ports:
       - 8080:8080
       - 50000:50000
-    environment:
-      - GIT_URL=https://github.com/alexisnikc/tp-final-credicoop
-      - GIT_BRANCH=main
-      - JENKINS_URL=http://localhost:8080/
-      - JENKINS_SECRET=${JENKINS_SECRET}
-      - JENKINS_AGENT_NAME=${JENKINS_AGENT_NAME}
     restart: always
-    networks:
-      - net_jenkins
-    depends_on:
-      - db
-
-  sonarqube:
-    container_name: sonarqube
-    image: sonarqube
-    depends_on:
-      - db
-    volumes:
-      - ./sonarqube/conf:/opt/sonarqube/conf
-      - ./sonarqube/data:/opt/sonarqube/data
-      - ./sonarqube/extensions:/opt/sonarqube/extensions
-      - ./sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
-    ports:
-      - 9000:9000
-    environment:
-      - SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonar
-      - SONAR_JDBC_USERNAME=${SONAR_USER}
-      - SONAR_JDBC_PASSWORD=${SONAR_PASSWORD}
     networks:
       - net_jenkins
 
@@ -44,31 +17,54 @@ services:
     privileged: true
     user: root
     volumes:
-      - ./init.sh:/mnt/init.sh 
+      - ./init.sh:/mnt/init.sh
     command: ["sh", "-e", "/mnt/init.sh"]
-    networks:
-      - net_jenkins
-
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ./postgresql/conf:/var/lib/postgresql
-      - ./postgresql/data:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - net_jenkins
     
+
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonartest
+      SONAR_JDBC_PASSWORD: sonartest
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+    networks:
+      - net_sonar
+  db:
+    image: postgres:12
+    networks:
+      - net_sonar  
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
   ansible:
     container_name: ansible
     image: williamyeh/ansible:alpine3
     volumes:
       - ./ansible:/ansible
     restart: always
-    networks:
-      - net_jenkins
-    
+
+volumes:
+  jenkins_home:
+  ansible:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
+
 networks:
   net_jenkins:
+  net_sonar:

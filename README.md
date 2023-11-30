@@ -1,9 +1,4 @@
 # VM1-CentOS-Infraestructura
-# -->ansible:
-#     image: williamyeh/ansible:alpine3
-#     volumes:
-#      - ./ansible:/ansible
-#
 # -->jenkins:
 #     image: jenkins/jenkins:lts
 #     ports:

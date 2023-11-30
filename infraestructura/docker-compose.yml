@@ -49,17 +49,8 @@ services:
     networks:
       - net_jenkins
 
-  ansible:
-    container_name: ansible
-    image: williamyeh/ansible:alpine3
-    volumes:
-      - ./ansible:/etc/ansible
-    command: ["ansible-playbook", "/etc/ansible/playbook_01.yml"]
-    restart: always
-
 volumes:
   jenkins_home:
-  ansible:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:

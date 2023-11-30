@@ -1,9 +1,0 @@
-all:
-  children:
-    produccion:
-      hosts:
-        #vm[1:2]:
-        VM2-Produccion
-    desarrollo:
-       hosts:
-         #vm3:
